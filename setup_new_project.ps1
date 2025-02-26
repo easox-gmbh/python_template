@@ -52,6 +52,7 @@ Set-Location $ProjectName
 $pyprojectContent = Get-Content .\pyproject.toml
 $updatedContent = $pyprojectContent -replace '(?<=python\s=\s")([^"]+)(?=")', $pythonVersionRange
 $updatedContent | Set-Content .\pyproject.toml
+poetry self add poetry-plugin-export
 
 # -----------------------------------------------------------------------------
 # 5) Add dev dependencies (pre-commit, pytest, pytest-timeout)
