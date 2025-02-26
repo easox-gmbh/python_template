@@ -1,0 +1,31 @@
+﻿repos:
+  - repo: local
+    hooks:
+      # (Optional) 1) Ensure dependencies match the lock file
+      - id: ensure-poetry-install
+        name: Ensure Poetry Dependencies Are Synced
+        entry: poetry install --sync --no-root
+        language: system
+        pass_filenames: false
+
+      # 2) Ruff for linting, import removal, sorting
+      - id: ruff
+        name: Ruff Lint & Fix
+        entry: poetry run ruff check --fix
+        language: system
+        # If you want to only lint staged files, leave pass_filenames: true
+        pass_filenames: true
+
+      # 3) Mypy for type checking
+      - id: mypy
+        name: Mypy Type Check
+        entry: poetry run mypy .
+        language: system
+        pass_filenames: false
+
+      # 4) Pytest for unit tests
+      - id: pytest
+        name: Run Unit Tests
+        entry: poetry run pytest
+        language: system
+        pass_filenames: false
