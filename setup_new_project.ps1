@@ -54,9 +54,9 @@ $updatedContent = $pyprojectContent -replace '(?<=python\s=\s")([^"]+)(?=")', $p
 $updatedContent | Set-Content .\pyproject.toml
 
 # -----------------------------------------------------------------------------
-# 5) Add dev dependencies (pre-commit, ruff, mypy, pytest, pytest-timeout)
+# 5) Add dev dependencies (pre-commit, pytest, pytest-timeout)
 # -----------------------------------------------------------------------------
-poetry add --group dev pre-commit ruff mypy pytest pytest-timeout
+poetry add --group dev pre-commit pytest pytest-timeout
 
 # Append a minimal [tool.ruff] config to pyproject.toml
 Add-Content .\pyproject.toml @"
@@ -81,14 +81,37 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=1000"]
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.7
+  - repo: https://github.com/hadialqattan/pycln.git
+    rev: v2.5.0
     hooks:
-      - id: ruff
-        name: Ruff Lint & Fix
-        entry: python
-        language: system
-        pass_filenames: true
+      - id: pycln
+        name: pycln
+        description: "A formatter for finding and removing unused import statements."
+        entry: pycln
+        language: python
+        language_version: python3
+        types: [python]
+
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.0.2
+    hooks:
+      - id: pylint
+        types: [python]
+        args:
+          [
+            "--disable=C0116,E0401"
+          ]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1

@@ -1,0 +1,89 @@
+﻿repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-case-conflict
+      - id: check-ast
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+
+  - repo: https://github.com/hadialqattan/pycln.git
+    rev: v2.5.0
+    hooks:
+      - id: pycln
+        name: pycln
+        description: "A formatter for finding and removing unused import statements."
+        entry: pycln
+        language: python
+        language_version: python3
+        types: [python]
+
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.0.2
+    hooks:
+      - id: pylint
+        types: [python]
+        args:
+          [
+            "--disable=C0116,E0401"
+          ]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.1
+    hooks:
+      - id: mypy
+        name: mypy
+        args:
+          [
+            --follow-imports=silent,
+            --ignore-missing-imports,
+            --show-column-numbers,
+            --no-pretty,
+            --strict,
+          ]
+        additional_dependencies: ["toml", "types-toml", "types-requests"]
+
+  - repo: local
+    hooks:
+      - id: poetry-install
+        name: Install project deps
+        entry: python
+        language: python
+        additional_dependencies: [pre-commit, poetry]
+        always_run: true
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            import os, sys, subprocess
+            os.chdir("ExampleProject")
+            result = subprocess.run(["poetry", "install"])
+            sys.exit(result.returncode)
+      - id: run-tests
+        name: Run tests
+        entry: python
+        language: python
+        additional_dependencies: [pre-commit, poetry]
+        always_run: true
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            import os, sys, subprocess
+            os.chdir("ExampleProject")
+            result = subprocess.run(["poetry", "run", "pytest"])
+            sys.exit(result.returncode)
